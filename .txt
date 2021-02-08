@@ -1,0 +1,11 @@
+1. The input event fires when the value of an <input>, <select>, or <textarea> element has been changed
+    {https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/input_event}
+2. event object for different events
+3. autocomplete widget working
+4. debouncing and throttling!
+5. use of spread and rest operator
+6. store the utility functions in seperate file
+7. !{call bind and apply}
+8. understanding reusability inside javascript
+9. .contains() function
+10. event bubbling
