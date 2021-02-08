@@ -60,6 +60,13 @@ async function movieSelected(event) {
 	search.value = event.target.innerText;
 	dropdown.classList.remove('is-active');
 	const result = await fetchMovie(search.value);
+	console.log(result);
+	const rottenRating = result.Ratings[0];
+	const boxOffice = result.boxOffice;
+
+	const image = document.querySelector('.card-image img');
+	const cardContent = document.querySelector('.card-content');
+	image.src = result.Poster;
 }
 
 const fetchMovie = async (title) => {

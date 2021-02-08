@@ -46,3 +46,10 @@ figure .image img {
 	height: 50px;
 	margin-right: 10px;
 }
+
+.card-image img {
+	width: 15vmax;
+}
+
+.none {
+}
