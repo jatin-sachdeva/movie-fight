@@ -1,74 +1,85 @@
-const fetchData = async function(searchValue) {
-	const response = await axios.get('http://www.omdbapi.com/', {
-		params: {
-			apikey: 'be698af8',
-			s: searchValue
-		}
-	});
-	if (response.data.Error) return [];
-
-	return response.data.Search;
-};
-
 // the html code for the widget setup inside a divison named autocomplete
-const autocomplete = document.querySelector('.autocomplete');
-autocomplete.innerHTML = `
-	<label for="search"> Search a Movie </label>
-	
-	<div class="dropdown">
-	<input type="text" id="search"/>
-		<div class ="dropdown-menu">
-			<div class ="dropdown-content results">
-			</div>
-		</div>
-	</div>
-`;
-
-const search = document.querySelector('#search');
-const dropdown = document.querySelector('.dropdown');
-const resultsWrapper = document.querySelector('.results');
-
-async function onInput(event) {
-	const movies = await fetchData(event.target.value);
-	// checking if no results are present inside movies
-	if (!movies.length) return;
-	dropdown.classList.add('is-active');
-	// clearing the previous search results
-	resultsWrapper.innerHTML = null;
-	// iterating the movie to display title and image
-
-	for (let movie of movies) {
-		// creating element for every returned result and apprnding it to the divison
-		const resultsItems = document.createElement('a');
-		resultsItems.classList.add('dropdown-item');
+let war = {};
+const autocomplete = {
+	resultItemsStructure(movie) {
 		const imgSrc = movie.Poster != 'N/A' ? movie.Poster : '';
-
-		resultsItems.innerHTML = `
+		return `
 		<img src="${imgSrc}">
 		${movie.Title}
 		`;
-		// resultsItems.addEventListener('click', (event) => {
-		// 	search.value = event.target.innerText;
-		// 	dropdown.classList.remove('is-active');
-		// });
-		resultsItems.addEventListener('click', movieSelected);
-		resultsWrapper.appendChild(resultsItems);
+	},
+	inputValue(movie) {
+		return movie.Title;
+	},
+	async fetchData(searchValue) {
+		const response = await axios.get('http://www.omdbapi.com/', {
+			params: {
+				apikey: 'be698af8',
+				s: searchValue
+			}
+		});
+		if (response.data.Error) return [];
+
+		return response.data.Search;
+	},
+	compare() {
+		console.log(war);
 	}
-}
+};
 
-async function movieSelected(event) {
-	search.value = event.target.innerText;
-	dropdown.classList.remove('is-active');
-	const result = await fetchMovie(search.value);
+createAutocomplete({
+	...autocomplete,
+	root: document.querySelector('#autocomplete-1'),
+	async optionSelected(movie) {
+		let compare = [];
+		compare = await movieSelected(movie, document.querySelector('.displayResult-1 .card-content'));
+		console.log(compare);
+		war['dataFirst'] = compare;
+	}
+});
+createAutocomplete({
+	...autocomplete,
+	root: document.querySelector('#autocomplete-2'),
+	async optionSelected(movie) {
+		let compare = [];
+		compare = await movieSelected(movie, document.querySelector('.displayResult-2 .card-content'));
+		console.log(compare);
+		war['dataSecond'] = compare;
+	}
+});
+
+async function movieSelected(movie, targetDiv) {
+	const result = await fetchMovie(movie.Title);
 	console.log(result);
-	const rottenRating = result.Ratings[0];
-	const boxOffice = result.boxOffice;
+	const rottenRating = result.Ratings[1];
+	// console.log(rottenRating);
+	const img = document.querySelector('.card-image img');
+	console.log(img);
+	img.src = result.Poster;
 
-	const image = document.querySelector('.card-image img');
-	const cardContent = document.querySelector('.card-content');
-	image.src = result.Poster;
+	const displayResult = targetDiv;
+	displayResult.innerHTML = movieTemp(result);
+	displayResult.classList.remove('none');
 }
-
+const movieTemp = (result) => {
+	return `
+		<div class="awards">
+		<h2>${result.Awards}</h2>
+    	</div>
+		<div class="boxOffice">
+		<h2>Box-Office</h2>
+		<h2>${result.BoxOffice}</h2>
+        </div>
+        <div class="metaScore">
+		<h2>Meta Score</h2>
+		<h2>${result.Metascore}</h2>
+    	</div>
+		<div class="Ratings">
+		<h2>IBDB rating</h2>
+		<h2>${result.Ratings[0].Value}</h2>
+    	</div>
+`;
+};
 const fetchMovie = async (title) => {
 	const response = await axios.get('http://www.omdbapi.com/', {
 		params: {
@@ -78,10 +89,3 @@ const fetchMovie = async (title) => {
 	});
 	return response.data;
 };
-
-search.addEventListener('input', debounce(onInput, 500));
-
-document.addEventListener('click', (event) => {
-	// .contains check whether the passed element(passed inside of .includes) is child of the targeted element(on which the method is applied)
-	autocomplete.contains(event.target) ? '' : dropdown.classList.remove('is-active');
-});

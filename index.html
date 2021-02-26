@@ -26,38 +26,45 @@
       </div>
     </section>
     <div class="container">
-      <!-- this is all bulma css-->
-      <!-- instead of adding directly in HTML add through js file, for reusability and efficiency purpose-->
-    
-      <!-- <div class="dropdown">
-      <input id="search" type="text">
-      <div class="dropdown-menu">
-        <div class="dropdown-content">
-          <a href="#" class="dropdown-item">jkdff</a>
-          <a href="#" class="dropdown-item">jkdff</a>
-          <a href="#" class="dropdown-item">jkdff</a>
-        </div>
-      </div> -->
-
-      <div class="autocomplete"></div>
-      <div class="displayResult none">
+      <div id="left">
+      <div id="autocomplete-1"></div>
+      <div class="displayResult-1 none">
         <div class="card">
             <div class="card-image">
-                <img src="https://images.pexels.com/photos/6032899/pexels-photo-6032899.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Placeholder image">
+                <img>
             
               </div>
             <div class="card-content">
-              <div style="display: flex; flex-direction: row;justify-content: space-between;" class="movieData">
-                <h2 style="display: inline-block;">box office</h2>
-                <h2 style="display: inline-block;">$80000</h2>
+              
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="right">
+      <div id="autocomplete-2"></div>
+      
+      <div class="displayResult-2 none">
+        <div class="card">
+            <div class="card-image">
+                <img>
+            
+              </div>
+            <div class="card-content">
+              <div class="boxOffice">
+              
+              </div>
+              <div class="ratings">
+                
               </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
    
     
     <script src="utility.js"></script>
+    <script src="autocomplete.js"></script>
     <script src="index.js"></script>
   </body>
 </html>

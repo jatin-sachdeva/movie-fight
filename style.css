@@ -48,8 +48,43 @@ figure .image img {
 }
 
 .card-image img {
-	width: 15vmax;
+	width: 20vmax;
 }
 
-.none {
+.displayResult-1,
+.displayResult-2 {
+	display: block;
+	width: 100%;
+	margin: 2vmin;
+}
+.card-image {
+	text-align: center;
+}
+.card-content > div {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+.container {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+.card-content {
+	/* display: flex;
+	flex-direction: column;
+	justify-content: space-between; */
+}
+.card-content > div {
+	margin-bottom: 2vmin;
+	border: 1px solid grey;
+	font-size: 1.5vmax;
+	font-family: monospace;
+	font-weight: 1000;
+}
+#left,
+#right {
+	border: 1px solid black;
+	width: 40%;
 }
