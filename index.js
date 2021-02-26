@@ -1,5 +1,5 @@
 // the html code for the widget setup inside a divison named autocomplete
-let war = {};
+
 const autocomplete = {
 	resultItemsStructure(movie) {
 		const imgSrc = movie.Poster != 'N/A' ? movie.Poster : '';
@@ -21,9 +21,6 @@ const autocomplete = {
 		if (response.data.Error) return [];
 
 		return response.data.Search;
-	},
-	compare() {
-		console.log(war);
 	}
 };
 
@@ -31,35 +28,45 @@ createAutocomplete({
 	...autocomplete,
 	root: document.querySelector('#autocomplete-1'),
 	async optionSelected(movie) {
-		let compare = [];
-		compare = await movieSelected(movie, document.querySelector('.displayResult-1 .card-content'));
-		console.log(compare);
-		war['dataFirst'] = compare;
+		await movieSelected(movie, document.querySelector('.displayResult-1'));
 	}
 });
 createAutocomplete({
 	...autocomplete,
 	root: document.querySelector('#autocomplete-2'),
 	async optionSelected(movie) {
-		let compare = [];
-		compare = await movieSelected(movie, document.querySelector('.displayResult-2 .card-content'));
-		console.log(compare);
-		war['dataSecond'] = compare;
+		movieSelected(movie, document.querySelector('.displayResult-2'));
 	}
 });
-
+let leftData;
+let rightData;
 async function movieSelected(movie, targetDiv) {
-	const result = await fetchMovie(movie.Title);
-	console.log(result);
-	const rottenRating = result.Ratings[1];
-	// console.log(rottenRating);
-	const img = document.querySelector('.card-image img');
+	console.log(movie.Title);
+	const result = await axios.get('http://www.omdbapi.com/', {
+		params: {
+			apikey: 'be698af8',
+			t: movie.Title
+		}
+	});
+	const img = targetDiv.querySelector('.card-image img');
 	console.log(img);
 	img.src = result.Poster;
-
-	const displayResult = targetDiv;
+	const displayResult = targetDiv.querySelector('.card-content');
 	displayResult.innerHTML = movieTemp(result);
 	displayResult.classList.remove('none');
+
+	// code for storing the response for comparing purposes
+	if (targetDiv.includes('1')) {
+		left = result.data;
+	} else {
+		right = result.data;
+	}
+	if (leftData && rightData) {
+		startCompare(leftData, rightData);
+	}
+	const startCompare = (left, right) => {
+		console.log(left, right);
+	};
 }
 const movieTemp = (result) => {
 	return `
@@ -79,13 +86,4 @@ const movieTemp = (result) => {
 		<h2>${result.Ratings[0].Value}</h2>
     	</div>
 `;
-};
-const fetchMovie = async (title) => {
-	const response = await axios.get('http://www.omdbapi.com/', {
-		params: {
-			apikey: 'be698af8',
-			t: title
-		}
-	});
-	return response.data;
 };
