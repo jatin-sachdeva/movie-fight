@@ -28,7 +28,7 @@ createAutocomplete({
 	...autocomplete,
 	root: document.querySelector('#autocomplete-1'),
 	async optionSelected(movie) {
-		await movieSelected(movie, document.querySelector('.displayResult-1'));
+		movieSelected(movie, document.querySelector('.displayResult-1'));
 	}
 });
 createAutocomplete({
@@ -41,49 +41,84 @@ createAutocomplete({
 let leftData;
 let rightData;
 async function movieSelected(movie, targetDiv) {
-	console.log(movie.Title);
-	const result = await axios.get('http://www.omdbapi.com/', {
+	const res = await axios.get('http://www.omdbapi.com/', {
 		params: {
 			apikey: 'be698af8',
 			t: movie.Title
 		}
 	});
+	const result = res.data;
 	const img = targetDiv.querySelector('.card-image img');
-	console.log(img);
+	// console.log(img);
 	img.src = result.Poster;
 	const displayResult = targetDiv.querySelector('.card-content');
 	displayResult.innerHTML = movieTemp(result);
 	displayResult.classList.remove('none');
 
 	// code for storing the response for comparing purposes
-	if (targetDiv.includes('1')) {
-		left = result.data;
-	} else {
-		right = result.data;
+	if (targetDiv.classList.value.includes('2')) {
+		rightData = result;
+	}
+	if (targetDiv.classList.value.includes('1')) {
+		leftData = result;
 	}
 	if (leftData && rightData) {
-		startCompare(leftData, rightData);
+		startCompare();
 	}
-	const startCompare = (left, right) => {
-		console.log(left, right);
-	};
+}
+function startCompare() {
+	// select the two targeted elements
+	const leftStats = document.querySelectorAll('.displayResult-1 .card-content div');
+	const rightStats = document.querySelectorAll('.displayResult-2 .card-content div');
+	console.log(leftStats, rightStats);
+
+	// comparing them
+	leftStats.forEach((lCurr, ind) => {
+		const rvalue = rightStats[ind];
+		const lvalue = leftStats[ind];
+		console.log(rvalue.dataset.value, lvalue.dataset.value);
+		if (parseInt(rvalue.dataset.value) > parseInt(lvalue.dataset.value)) {
+			lvalue.setAttribute('style', 'background-color:yellow');
+			rvalue.setAttribute('style', 'background-color:green');
+		} else {
+			rvalue.setAttribute('style', 'background-color:yellow');
+			lvalue.setAttribute('style', 'background-color:green');
+		}
+	});
 }
 const movieTemp = (result) => {
+	const collection = result.BoxOffice.slice(1).replace(/,/g, '');
+	const imdb = parseFloat(result.Ratings[0].Value.slice(0, 3));
+	const meta = parseInt(result.Metascore);
+	const votes = parseInt(result.imdbVotes.replace(/,/g, ''));
+	const award = result.Awards.split(' ').reduce((acc, curr) => {
+		// console.log(parseInt(curr));
+		if (parseInt(curr)) {
+			return acc + parseInt(curr);
+		} else {
+			return acc;
+		}
+	}, 0);
+	// console.log(collection, imdb, meta, votes, award);
 	return `
-		<div class="awards">
+		<div data-value=${award} class="awards">
 		<h2>${result.Awards}</h2>
     	</div>
-		<div class="boxOffice">
+		<div data-value=${collection} class="boxOffice">
 		<h2>Box-Office</h2>
 		<h2>${result.BoxOffice}</h2>
         </div>
-        <div class="metaScore">
+        <div data-value=${meta} class="metaScore">
 		<h2>Meta Score</h2>
 		<h2>${result.Metascore}</h2>
     	</div>
-		<div class="Ratings">
+		<div data-value=${imdb} class="Ratings">
 		<h2>IBDB rating</h2>
 		<h2>${result.Ratings[0].Value}</h2>
+    	</div>
+		<div data-value=${votes} class="votes">
+		<h2>IMDB votes</h2>
+		<h2>${result.imdbVotes}</h2>
     	</div>
 `;
 };

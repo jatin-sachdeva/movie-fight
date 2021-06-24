@@ -77,14 +77,17 @@ figure .image img {
 	justify-content: space-between; */
 }
 .card-content > div {
+	/* background-color: green; */
+	padding: 12px;
 	margin-bottom: 2vmin;
-	border: 1px solid grey;
+	/* border: 1px solid grey; */
+	border-radius: 3px;
 	font-size: 1.5vmax;
 	font-family: monospace;
 	font-weight: 1000;
 }
 #left,
 #right {
-	border: 1px solid black;
+	/* border: 1px solid black; */
 	width: 40%;
 }
